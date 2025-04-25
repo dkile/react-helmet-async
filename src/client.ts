@@ -46,10 +46,23 @@ const updateTags = (type: string, tags: HTMLElement[]) => {
 
       newElement.setAttribute(HELMET_ATTRIBUTE, 'true');
 
+      // Special handling for alternate links to ensure proper comparison
+      const isAlternateLink = newElement.getAttribute('rel') === 'alternate';
+
       // Remove a duplicate tag from domTagstoRemove, so it isn't cleared.
       if (
         oldTags.some((existingTag, index) => {
           indexToDelete = index;
+
+          // For alternate links, compare href and hreflang attributes explicitly
+          if (isAlternateLink) {
+            const sameHref = newElement.getAttribute('href') === existingTag.getAttribute('href');
+            const sameHreflang =
+              newElement.getAttribute('hreflang') === existingTag.getAttribute('hreflang');
+            return sameHref && sameHreflang;
+          }
+
+          // For other tags, use standard node equality check
           return newElement.isEqualNode(existingTag);
         })
       ) {

@@ -1,10 +1,12 @@
-# @yong/react-helmet-async
+# @dkile/react-helmet-async
 
 This package is a fork of [react-helmet-async](https://github.com/staylor/react-helmet-async) with a fix for `<link rel="alternate" ... />` tags not being properly removed when navigating between pages.
 
 ## Changes from react-helmet-async
 
 - Fixed issue where `<link rel="alternate" ... />` tags were not properly removed when navigating between pages.
+- Improved tag identification logic for alternate links with hreflang attributes.
+- Enhanced tag comparison logic to ensure proper handling of alternate links during page navigation.
 
 ## Original Description
 
@@ -152,9 +154,8 @@ In your server template:
 ```javascript
 <html>
   <head>
-    ${helmet.title.toString()}${helmet.priority.toString()}${helmet.meta.toString()}${helmet.link.toString()}
-
-    ${helmet.script.toString()}
+    ${helmet.title.toString()}${helmet.priority.toString()}${helmet.meta.toString()}$
+    {helmet.link.toString()}${helmet.script.toString()}
   </head>
   ...
 </html>

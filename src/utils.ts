@@ -144,13 +144,21 @@ const getTagsFromPropsList = (
               primaryAttributeKey = lowerCaseAttributeKey;
             }
 
-            // Special case for alternate links - use href as the primary identifier
+            // Special case for alternate links - create a composite key from rel + hreflang + href
+            // This ensures each alternate link with different language is treated as unique
             if (
               lowerCaseAttributeKey === TAG_PROPERTIES.REL &&
-              tag[lowerCaseAttributeKey].toLowerCase() === 'alternate' &&
-              tag[TAG_PROPERTIES.HREF]
+              tag[lowerCaseAttributeKey].toLowerCase() === 'alternate'
             ) {
-              primaryAttributeKey = TAG_PROPERTIES.HREF;
+              // If hreflang exists, use it as part of the key
+              if (tag.hreflang) {
+                // Create a composite key that includes both href and hreflang
+                tag._alternateKey = `${tag[TAG_PROPERTIES.HREF]}_${tag.hreflang}`;
+                primaryAttributeKey = '_alternateKey';
+              } else {
+                // If no hreflang, use href as the primary key
+                primaryAttributeKey = TAG_PROPERTIES.HREF;
+              }
             }
             // Special case for innerHTML which doesn't work lowercased
             if (
