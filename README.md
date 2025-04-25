@@ -1,8 +1,12 @@
-# react-helmet-async
+# @yong/react-helmet-async
 
-[![CircleCI](https://circleci.com/gh/staylor/react-helmet-async.svg?style=svg)](https://circleci.com/gh/staylor/react-helmet-async)
+This package is a fork of [react-helmet-async](https://github.com/staylor/react-helmet-async) with a fix for `<link rel="alternate" ... />` tags not being properly removed when navigating between pages.
 
-[Announcement post on Times Open blog](https://open.nytimes.com/the-future-of-meta-tag-management-for-modern-react-development-ec26a7dc9183)
+## Changes from react-helmet-async
+
+- Fixed issue where `<link rel="alternate" ... />` tags were not properly removed when navigating between pages.
+
+## Original Description
 
 This package is a fork of [React Helmet](https://github.com/nfl/react-helmet).
 `<Helmet>` usage is synonymous, but server and client now requires `<HelmetProvider>` to encapsulate state per request.
@@ -118,6 +122,7 @@ renderToNodeStream(app)
 ```
 
 ## Usage in Jest
+
 While testing in using jest, if there is a need to emulate SSR, the following string is required to have the test behave the way they are expected to.
 
 ```javascript
@@ -131,13 +136,14 @@ HelmetProvider.canUseDOM = false;
 It is understood that in some cases for SEO, certain tags should appear earlier in the HEAD. Using the `prioritizeSeoTags` flag on any `<Helmet>` component allows the server render of react-helmet-async to expose a method for prioritizing relevant SEO tags.
 
 In the component:
+
 ```javascript
 <Helmet prioritizeSeoTags>
   <title>A fancy webpage</title>
   <link rel="notImportant" href="https://www.chipotle.com" />
   <meta name="whatever" value="notImportant" />
   <link rel="canonical" href="https://www.tacobell.com" />
-  <meta property="og:title" content="A very important title"/>
+  <meta property="og:title" content="A very important title" />
 </Helmet>
 ```
 
@@ -146,10 +152,8 @@ In your server template:
 ```javascript
 <html>
   <head>
-    ${helmet.title.toString()}
-    ${helmet.priority.toString()}
-    ${helmet.meta.toString()}
-    ${helmet.link.toString()}
+    ${helmet.title.toString()}${helmet.priority.toString()}${helmet.meta.toString()}${helmet.link.toString()}
+
     ${helmet.script.toString()}
   </head>
   ...
@@ -162,7 +166,7 @@ Will result in:
 <html>
   <head>
     <title>A fancy webpage</title>
-    <meta property="og:title" content="A very important title"/>
+    <meta property="og:title" content="A very important title" />
     <link rel="canonical" href="https://www.tacobell.com" />
     <meta name="whatever" value="notImportant" />
     <link rel="notImportant" href="https://www.chipotle.com" />
@@ -174,8 +178,8 @@ Will result in:
 A list of prioritized tags and attributes can be found in [constants.ts](./src/constants.ts).
 
 ## Usage without Context
-You can optionally use `<Helmet>` outside a context by manually creating a stateful `HelmetData` instance, and passing that stateful object to each `<Helmet>` instance:
 
+You can optionally use `<Helmet>` outside a context by manually creating a stateful `HelmetData` instance, and passing that stateful object to each `<Helmet>` instance:
 
 ```js
 import React from 'react';
@@ -185,13 +189,13 @@ import { Helmet, HelmetProvider, HelmetData } from 'react-helmet-async';
 const helmetData = new HelmetData({});
 
 const app = (
-    <App>
-      <Helmet helmetData={helmetData}>
-        <title>Hello World</title>
-        <link rel="canonical" href="https://www.tacobell.com/" />
-      </Helmet>
-      <h1>Hello World</h1>
-    </App>
+  <App>
+    <Helmet helmetData={helmetData}>
+      <title>Hello World</title>
+      <link rel="canonical" href="https://www.tacobell.com/" />
+    </Helmet>
+    <h1>Hello World</h1>
+  </App>
 );
 
 const html = renderToString(app);

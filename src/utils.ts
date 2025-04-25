@@ -135,9 +135,22 @@ const getTagsFromPropsList = (
               !(
                 lowerCaseAttributeKey === TAG_PROPERTIES.REL &&
                 tag[lowerCaseAttributeKey].toLowerCase() === 'stylesheet'
+              ) &&
+              !(
+                lowerCaseAttributeKey === TAG_PROPERTIES.REL &&
+                tag[lowerCaseAttributeKey].toLowerCase() === 'alternate'
               )
             ) {
               primaryAttributeKey = lowerCaseAttributeKey;
+            }
+
+            // Special case for alternate links - use href as the primary identifier
+            if (
+              lowerCaseAttributeKey === TAG_PROPERTIES.REL &&
+              tag[lowerCaseAttributeKey].toLowerCase() === 'alternate' &&
+              tag[TAG_PROPERTIES.HREF]
+            ) {
+              primaryAttributeKey = TAG_PROPERTIES.HREF;
             }
             // Special case for innerHTML which doesn't work lowercased
             if (
